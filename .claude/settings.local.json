@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run build)",
+      "Bash(npx electron-builder:*)",
+      "Bash(npm ls:*)",
+      "Bash(cat:*)",
+      "Bash(chmod:*)",
+      "Bash(npm start)",
+      "Bash(./install.sh)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  body {
+    @apply m-0 p-0 font-sans antialiased;
+    @apply bg-app-bg text-app-text;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-app-surface;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-app-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-app-accent;
+  }
+}
+
+@layer components {
+  .clipboard-item {
+    @apply p-3 bg-app-surface border border-app-border rounded-lg;
+    @apply hover:border-app-accent cursor-pointer transition-all duration-200;
+  }
+
+  .clipboard-item:hover {
+    @apply transform scale-[1.02];
+  }
+
+  .search-input {
+    @apply w-full px-4 py-3 bg-app-surface border border-app-border;
+    @apply rounded-lg text-app-text placeholder-app-text-muted;
+    @apply focus:outline-none focus:border-app-accent transition-colors;
+  }
+
+  /* Hacer la ventana arrastrable */
+  .draggable-header {
+    -webkit-app-region: drag;
+    user-select: none;
+  }
+
+  .draggable-area {
+    -webkit-app-region: drag;
+    cursor: move;
+  }
+
+  /* Permitir interacción con botones dentro del header */
+  .no-drag {
+    -webkit-app-region: no-drag;
+  }
+
+  /* También permitir selección de texto en áreas que no son arrastrables */
+  .search-input,
+  .clipboard-item,
+  button {
+    -webkit-app-region: no-drag;
+  }
+}

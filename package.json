@@ -1,0 +1,97 @@
+{
+  "name": "my_clipboard",
+  "version": "1.0.0",
+  "description": "Clipboard manager con Electron y React",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "build:main": "webpack --config webpack.main.config.js --mode production",
+    "build:renderer": "webpack --config webpack.renderer.config.js --mode production",
+    "build:preload": "webpack --config webpack.preload.config.js --mode production",
+    "build": "npm run build:preload && npm run build:main && npm run build:renderer",
+    "watch:main": "webpack --config webpack.main.config.js --mode development --watch",
+    "watch:renderer": "webpack --config webpack.renderer.config.js --mode development --watch",
+    "watch:preload": "webpack --config webpack.preload.config.js --mode development --watch",
+    "start": "npm run build && electron .",
+    "dev": "concurrently \"npm run watch:preload\" \"npm run watch:main\" \"npm run watch:renderer\" \"wait-on dist/preload/preload.js dist/main/main.js dist/renderer/index.html && electron .\"",
+    "package": "npm run build && electron-builder"
+  },
+  "keywords": [
+    "clipboard",
+    "manager",
+    "electron",
+    "productivity"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "build": {
+    "appId": "com.myclipboard.app",
+    "productName": "My Clipboard",
+    "files": [
+      "dist/**/*",
+      "package.json",
+      "!node_modules",
+      {
+        "from": "node_modules/electron-store",
+        "to": "node_modules/electron-store"
+      },
+      {
+        "from": "node_modules/react",
+        "to": "node_modules/react"
+      },
+      {
+        "from": "node_modules/react-dom",
+        "to": "node_modules/react-dom"
+      },
+      {
+        "from": "node_modules/uuid",
+        "to": "node_modules/uuid"
+      },
+      {
+        "from": "node_modules/scheduler",
+        "to": "node_modules/scheduler"
+      }
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Utility"
+    },
+    "nodeGypRebuild": false,
+    "npmRebuild": false,
+    "buildDependenciesFromSource": false
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@types/uuid": "^10.0.0",
+    "autoprefixer": "^10.4.22",
+    "concurrently": "^9.2.1",
+    "copy-webpack-plugin": "^13.0.1",
+    "css-loader": "^7.1.2",
+    "electron": "^39.2.1",
+    "electron-builder": "^26.0.12",
+    "html-webpack-plugin": "^5.6.4",
+    "postcss": "^8.5.6",
+    "postcss-loader": "^8.2.0",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^3.4.18",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "wait-on": "^9.0.3",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  }
+}
