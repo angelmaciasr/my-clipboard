@@ -8,7 +8,7 @@ Una aplicación de escritorio para gestionar el historial del portapapeles, cons
 - **Persistencia**: El historial se mantiene entre sesiones
 - **Búsqueda rápida**: Busca en tu historial de copias con filtrado en tiempo real
 - **Invocación rápida**:
-  - Atajo de teclado global: `Ctrl+Alt+V` (o `Cmd+Alt+V` en macOS)
+  - Atajo de teclado global: `Ctrl+Alt+L` (o `Cmd+Alt+L` en macOS)
   - Ícono en la bandeja del sistema
 - **Interfaz moderna**: UI oscura construida con Tailwind CSS
 - **Ejecuta en segundo plano**: La aplicación permanece activa sin ocupar espacio en la barra de tareas
@@ -84,7 +84,7 @@ Esto generará archivos en la carpeta `release/`:
 
 Hay dos formas de abrir la ventana del clipboard:
 
-1. **Atajo de teclado**: Presiona `Ctrl+Shift+V` desde cualquier aplicación
+1. **Atajo de teclado**: Presiona `Ctrl+Alt+L` desde cualquier aplicación
 2. **Tray icon**: Haz clic en el ícono de la bandeja del sistema
 
 ### Copiar un elemento
@@ -119,7 +119,7 @@ Presiona `Esc` o haz clic fuera de la ventana para cerrarla.
 
 | Atajo | Acción |
 |-------|--------|
-| `Ctrl+Alt+V` | Abrir/cerrar la ventana del clipboard |
+| `Ctrl+Alt+L` | Abrir/cerrar la ventana del clipboard |
 | `Esc` | Cerrar la ventana |
 | `Enter` | Copiar el elemento seleccionado |
 
@@ -173,8 +173,8 @@ private readonly pollInterval = 500; // Cambia este valor (en milisegundos)
 Para cambiar el atajo de teclado, edita `src/main/index.ts`:
 
 ```typescript
-globalShortcut.register('CommandOrControl+Shift+V', () => {
-  // Cambia 'CommandOrControl+Shift+V' por tu atajo preferido
+globalShortcut.register('CommandOrControl+Alt+L', () => {
+  // Cambia 'CommandOrControl+Alt+L' por tu atajo preferido
 });
 ```
 

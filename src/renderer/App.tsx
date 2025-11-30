@@ -128,7 +128,7 @@ const App: React.FC = () => {
 
       <div className="px-4 py-2 text-center text-xs text-app-text-muted border-t border-app-border">
         <p>
-          <kbd className="px-2 py-1 bg-app-surface rounded">Ctrl+Shift+V</kbd> para abrir
+          <kbd className="px-2 py-1 bg-app-surface rounded">Ctrl+Alt+L</kbd> para abrir
           {' · '}
           <kbd className="px-2 py-1 bg-app-surface rounded">Esc</kbd> para cerrar
         </p>
