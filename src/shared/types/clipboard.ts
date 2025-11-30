@@ -19,6 +19,7 @@ export enum IpcChannel {
   COPY_TO_CLIPBOARD = 'clipboard:copy',
   DELETE_ITEM = 'clipboard:delete',
   CLEAR_ALL = 'clipboard:clear-all',
+  CLEAR_OLDEST = 'clipboard:clear-oldest',
   GET_ALL_ITEMS = 'clipboard:get-all',
 
   // Bidireccional

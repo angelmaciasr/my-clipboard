@@ -30,6 +30,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.send(IpcChannel.CLEAR_ALL);
   },
 
+  // Limpiar los más antiguos
+  clearOldest: (count: number) => {
+    ipcRenderer.send(IpcChannel.CLEAR_OLDEST, count);
+  },
+
   // Ocultar ventana
   hideWindow: () => {
     ipcRenderer.send(IpcChannel.HIDE_WINDOW);
@@ -58,6 +63,7 @@ export interface ElectronAPI {
   copyToClipboard: (content: string) => void;
   deleteItem: (itemId: string) => void;
   clearAll: () => void;
+  clearOldest: (count: number) => void;
   hideWindow: () => void;
   toggleWindow: () => void;
   minimizeWindow: () => void;

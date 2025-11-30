@@ -24,16 +24,16 @@ export class StorageService {
    * Añadir un nuevo item al historial
    */
   addItem(item: ClipboardItem): void {
-    const items = this.getAllItems();
+    let items = this.getAllItems();
 
-    // Verificar si ya existe un item idéntico (evitar duplicados consecutivos)
-    if (items.length > 0) {
-      const lastItem = items[0];
+    // Buscar y eliminar cualquier item idéntico existente
+    const duplicateIndex = items.findIndex((existingItem) =>
+      this.areItemsEqual(existingItem, item)
+    );
 
-      if (this.areItemsEqual(lastItem, item)) {
-        console.log('Item duplicado, ignorando...');
-        return;
-      }
+    if (duplicateIndex !== -1) {
+      console.log('Item duplicado encontrado, eliminando el anterior...');
+      items.splice(duplicateIndex, 1);
     }
 
     // Añadir al principio de la lista (más reciente primero)
@@ -147,6 +147,32 @@ export class StorageService {
     if (items.length > max) {
       items.splice(max);
       this.store.set('clipboardItems', items);
+    }
+  }
+
+  /**
+   * Eliminar los últimos N elementos (los más antiguos)
+   */
+  clearOldest(count: number): void {
+    try {
+      const items = this.getAllItems();
+
+      if (items.length === 0) {
+        console.log('No hay elementos para eliminar');
+        return;
+      }
+
+      // Calcular cuántos elementos eliminar
+      const itemsToRemove = Math.min(count, items.length);
+
+      // Eliminar desde el final (más antiguos)
+      items.splice(-itemsToRemove);
+
+      this.store.set('clipboardItems', items);
+      console.log(`✓ ${itemsToRemove} elementos más antiguos eliminados`);
+    } catch (error) {
+      console.error('✗ Error eliminando elementos antiguos:', error);
+      throw error;
     }
   }
 }

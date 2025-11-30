@@ -100,15 +100,15 @@ function toggleWindow(): void {
 }
 
 function registerShortcuts(): void {
-  // Atajo global Ctrl+Alt+L
-  const ret = globalShortcut.register('CommandOrControl+Alt+L', () => {
+  // Atajo global Ctrl+Alt+V
+  const ret = globalShortcut.register('CommandOrControl+Alt+V', () => {
     toggleWindow();
   });
 
   if (!ret) {
-    console.log('❌ Error: No se pudo registrar el atajo Ctrl+Alt+L (puede estar en uso por otra aplicación)');
+    console.log('❌ Error: No se pudo registrar el atajo Ctrl+Alt+V (puede estar en uso por otra aplicación)');
   } else {
-    console.log('✅ Atajo registrado exitosamente: Ctrl+Alt+L');
+    console.log('✅ Atajo registrado exitosamente: Ctrl+Alt+V');
   }
 }
 
@@ -209,6 +209,32 @@ function setupIpcHandlers(): void {
       }
     } catch (error) {
       logger.error('Error in CLEAR_ALL handler', error);
+    }
+  });
+
+  ipcMain.on(IpcChannel.CLEAR_OLDEST, (_event, count: number) => {
+    logger.log(`CLEAR_OLDEST received from renderer, count: ${count}`);
+    try {
+      if (storageService) {
+        logger.log(`Calling storageService.clearOldest(${count})`);
+        storageService.clearOldest(count);
+        logger.log('✓ Oldest items cleared successfully');
+
+        // Usar setImmediate para asegurar que el storage se escribe antes de notificar
+        setImmediate(() => {
+          logger.log('Sending CLIPBOARD_UPDATED event with updated items');
+          if (mainWindow && !mainWindow.isDestroyed() && storageService) {
+            mainWindow.webContents.send(IpcChannel.CLIPBOARD_UPDATED, storageService.getAllItems());
+            logger.log('✓ CLIPBOARD_UPDATED event sent');
+          } else {
+            logger.warn('mainWindow is destroyed or null');
+          }
+        });
+      } else {
+        logger.warn('storageService is null');
+      }
+    } catch (error) {
+      logger.error('Error in CLEAR_OLDEST handler', error);
     }
   });
 }

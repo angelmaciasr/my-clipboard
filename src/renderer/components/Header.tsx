@@ -7,6 +7,8 @@ interface HeaderProps {
 
 const Header = (props : HeaderProps) => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [clearAllChecked, setClearAllChecked] = useState(false);
+  const [clearOldestChecked, setClearOldestChecked] = useState(true);
 
   // Manejar botones de ventana estilo macOS
     const handleClose = useCallback(() => {
@@ -30,20 +32,40 @@ const Header = (props : HeaderProps) => {
         setShowConfirmDialog(true);
       }, []);
 
+      const handleClearAllCheckChange = useCallback(() => {
+        setClearAllChecked(true);
+        setClearOldestChecked(false);
+      }, []);
+
+      const handleClearOldestCheckChange = useCallback(() => {
+        setClearAllChecked(false);
+        setClearOldestChecked(true);
+      }, []);
+
       const confirmClearAll = useCallback(() => {
-        logger.log('confirmClearAll confirmed, calling electronAPI.clearAll()');
+        logger.log('confirmClearAll confirmed');
         setShowConfirmDialog(false);
         try {
-          window.electronAPI.clearAll();
-          logger.log('✓ clearAll() called successfully');
+          if (clearAllChecked) {
+            logger.log('Calling electronAPI.clearAll()');
+            window.electronAPI.clearAll();
+            logger.log('✓ clearAll() called successfully');
+          } else if (clearOldestChecked) {
+            logger.log('Calling electronAPI.clearOldest(25)');
+            window.electronAPI.clearOldest(25);
+            logger.log('✓ clearOldest(25) called successfully');
+          }
         } catch (error) {
-          logger.error('✗ Error calling clearAll():', error);
+          logger.error('✗ Error calling clear method:', error);
         }
-      }, []);
+      }, [clearAllChecked, clearOldestChecked]);
 
       const cancelClearAll = useCallback(() => {
         logger.log('cancelClearAll clicked');
         setShowConfirmDialog(false);
+        // Resetear a valores por defecto
+        setClearAllChecked(true);
+        setClearOldestChecked(false);
       }, []);
 
 
@@ -93,11 +115,35 @@ const Header = (props : HeaderProps) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 max-w-sm mx-4">
             <h2 className="text-lg font-semibold text-app-text mb-4">
-              ¿Borrar todo el historial?
+              Opciones de limpieza
             </h2>
-            <p className="text-app-text-muted mb-6">
-              Esta acción no se puede deshacer. Se eliminarán todos los elementos del historial del portapapeles.
+            <p className="text-app-text-muted mb-4">
+              Selecciona qué deseas eliminar:
             </p>
+
+            {/* Opciones de checkbox */}
+            <div className="mb-6 space-y-3">
+              <label className="flex items-center gap-3 cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors">
+                <input
+                  type="checkbox"
+                  checked={clearAllChecked}
+                  onChange={handleClearAllCheckChange}
+                  className="w-4 h-4 text-red-600 bg-gray-700 border-gray-600 rounded focus:ring-red-500"
+                />
+                <span className="text-app-text">Borrar todo</span>
+              </label>
+
+              <label className="flex items-center gap-3 cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors">
+                <input
+                  type="checkbox"
+                  checked={clearOldestChecked}
+                  onChange={handleClearOldestCheckChange}
+                  className="w-4 h-4 text-red-600 bg-gray-700 border-gray-600 rounded focus:ring-red-500"
+                />
+                <span className="text-app-text">Borrar últimos 25 elementos (más antiguos)</span>
+              </label>
+            </div>
+
             <div className="flex gap-3 justify-end">
               <button
                 onClick={cancelClearAll}
@@ -109,7 +155,7 @@ const Header = (props : HeaderProps) => {
                 onClick={confirmClearAll}
                 className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white transition-colors"
               >
-                Borrar
+                Confirmar
               </button>
             </div>
           </div>
