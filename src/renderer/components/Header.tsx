@@ -15,7 +15,7 @@ const Header = (props : HeaderProps) => {
       logger.log('handleClose clicked');
       window.electronAPI.hideWindow();
     }, []);
-
+    
     const handleMinimize = useCallback(() => {
       logger.log('handleMinimize clicked');
       window.electronAPI.minimizeWindow();
