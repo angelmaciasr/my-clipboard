@@ -9,7 +9,11 @@
 
   body {
     @apply m-0 p-0 font-sans antialiased;
-    @apply bg-app-bg text-app-text;
+    @apply bg-transparent text-app-text;
+  }
+
+  #root {
+    @apply bg-transparent;
   }
 
   ::-webkit-scrollbar {

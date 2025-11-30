@@ -4,6 +4,7 @@ export interface ClipboardItem {
   content: string; // Para texto: el texto; Para imagen: base64 data URL
   timestamp: number;
   preview?: string; // Preview truncado para texto largo
+  lastUsed?: number; // Timestamp de la última vez que se usó (pegó) el elemento
 }
 
 export interface ClipboardData {
@@ -21,6 +22,7 @@ export enum IpcChannel {
   CLEAR_ALL = 'clipboard:clear-all',
   CLEAR_OLDEST = 'clipboard:clear-oldest',
   GET_ALL_ITEMS = 'clipboard:get-all',
+  UPDATE_LAST_USED = 'clipboard:update-last-used',
 
   // Bidireccional
   TOGGLE_WINDOW = 'window:toggle',

@@ -10,6 +10,27 @@ let tray: Tray | null = null;
 let clipboardMonitor: ClipboardMonitor | null = null;
 let storageService: StorageService | null = null;
 
+// Asegurar que solo haya una instancia de la aplicación
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  // Si ya hay una instancia corriendo, cerrar esta nueva instancia
+  console.log('Ya hay una instancia de la aplicación corriendo. Cerrando esta instancia.');
+  app.quit();
+} else {
+  // Si alguien intenta abrir una segunda instancia, mostrar la ventana existente
+  app.on('second-instance', () => {
+    console.log('Se intentó abrir una segunda instancia. Mostrando la ventana existente.');
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
+}
+
 function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 800,
@@ -19,7 +40,8 @@ function createWindow(): void {
     resizable: true, // Permitir redimensionar
     skipTaskbar: false, // No aparecer en la barra de tareas
     alwaysOnTop: false,
-    transparent: false,
+    transparent: true,
+    backgroundColor: '#00000000', // Fondo transparente
     icon: path.join(__dirname, '../../assets/icon.png'), // Ícono de la ventana
     webPreferences: {
       nodeIntegration: false,
@@ -100,15 +122,20 @@ function toggleWindow(): void {
 }
 
 function registerShortcuts(): void {
-  // Atajo global Ctrl+Alt+V
-  const ret = globalShortcut.register('CommandOrControl+Alt+V', () => {
+  // Desregistrar primero si ya existe
+  if (globalShortcut.isRegistered('CommandOrControl+Alt+L')) {
+    globalShortcut.unregister('CommandOrControl+Alt+L');
+  }
+
+  // Atajo global Ctrl+Alt+L
+  const ret = globalShortcut.register('CommandOrControl+Alt+L', () => {
     toggleWindow();
   });
 
   if (!ret) {
-    console.log('❌ Error: No se pudo registrar el atajo Ctrl+Alt+V (puede estar en uso por otra aplicación)');
+    console.log('❌ Error: No se pudo registrar el atajo Ctrl+Alt+L (puede estar en uso por otra aplicación)');
   } else {
-    console.log('✅ Atajo registrado exitosamente: Ctrl+Alt+V');
+    console.log('✅ Atajo registrado exitosamente: Ctrl+Alt+L');
   }
 }
 
@@ -159,11 +186,10 @@ function setupIpcHandlers(): void {
     }
 
     // Esperar un momento para que la ventana se oculte
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 150));
 
-    // Simular Ctrl+V para pegar automáticamente
-    // Usar xdotool en Linux
-    exec('xdotool key --clearmodifiers ctrl+v', (error: any) => {
+    // Simular Ctrl+V para pegar automáticamente y asegurar que se liberen los modificadores
+    exec('xdotool key --clearmodifiers ctrl+v && xdotool keyup Control_L Control_R Alt_L Alt_R', (error: any) => {
       if (error) {
         console.log('xdotool no disponible, usando método alternativo');
         // Alternativa: usar xte si está disponible
@@ -173,6 +199,11 @@ function setupIpcHandlers(): void {
           }
         });
       }
+      // Esperar más tiempo antes de re-registrar para asegurar que xdotool terminó
+      setTimeout(() => {
+        console.log('🔄 Re-registrando atajo después del pegado...');
+        registerShortcuts();
+      }, 500);
     });
   });
 
@@ -235,6 +266,32 @@ function setupIpcHandlers(): void {
       }
     } catch (error) {
       logger.error('Error in CLEAR_OLDEST handler', error);
+    }
+  });
+
+  ipcMain.on(IpcChannel.UPDATE_LAST_USED, (_event, itemId: string) => {
+    logger.log(`UPDATE_LAST_USED received from renderer, itemId: ${itemId}`);
+    try {
+      if (storageService) {
+        logger.log(`Calling storageService.updateLastUsed(${itemId})`);
+        storageService.updateLastUsed(itemId);
+        logger.log('✓ lastUsed updated successfully');
+
+        // Notificar al renderer con los items actualizados
+        setImmediate(() => {
+          logger.log('Sending CLIPBOARD_UPDATED event with updated items');
+          if (mainWindow && !mainWindow.isDestroyed() && storageService) {
+            mainWindow.webContents.send(IpcChannel.CLIPBOARD_UPDATED, storageService.getAllItems());
+            logger.log('✓ CLIPBOARD_UPDATED event sent');
+          } else {
+            logger.warn('mainWindow is destroyed or null');
+          }
+        });
+      } else {
+        logger.warn('storageService is null');
+      }
+    } catch (error) {
+      logger.error('Error in UPDATE_LAST_USED handler', error);
     }
   });
 }

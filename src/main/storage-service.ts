@@ -175,4 +175,28 @@ export class StorageService {
       throw error;
     }
   }
+
+  /**
+   * Actualizar la última vez que se usó un elemento
+   */
+  updateLastUsed(itemId: string): void {
+    try {
+      const items = this.getAllItems();
+      const itemIndex = items.findIndex((item) => item.id === itemId);
+
+      if (itemIndex === -1) {
+        console.log(`Item con id ${itemId} no encontrado`);
+        return;
+      }
+
+      // Actualizar el timestamp de lastUsed
+      items[itemIndex].lastUsed = Date.now();
+
+      this.store.set('clipboardItems', items);
+      console.log(`✓ lastUsed actualizado para item ${itemId}`);
+    } catch (error) {
+      console.error('✗ Error actualizando lastUsed:', error);
+      throw error;
+    }
+  }
 }

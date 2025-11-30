@@ -79,7 +79,16 @@ const ClipboardItemComponent: React.FC<ClipboardItemProps> = ({
           </div>
 
           <div className="mt-2 flex items-center justify-between">
-            <span className="text-xs text-app-text-muted">{formatDate(item.timestamp)}</span>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-app-text-muted">
+                Copiado: {formatDate(item.timestamp)}
+              </span>
+              {item.lastUsed && (
+                <span className="text-xs text-green-400">
+                  ✓ Usado: {formatDate(item.lastUsed)}
+                </span>
+              )}
+            </div>
             <span className="text-xs text-app-text-muted">
               {item.content.length} caracteres
             </span>
@@ -95,8 +104,15 @@ const ClipboardItemComponent: React.FC<ClipboardItemProps> = ({
             />
           </div>
 
-          <div className="mt-2">
-            <span className="text-xs text-app-text-muted">{formatDate(item.timestamp)}</span>
+          <div className="mt-2 flex flex-col gap-1">
+            <span className="text-xs text-app-text-muted">
+              Copiado: {formatDate(item.timestamp)}
+            </span>
+            {item.lastUsed && (
+              <span className="text-xs text-green-400">
+                ✓ Usado: {formatDate(item.lastUsed)}
+              </span>
+            )}
           </div>
         </div>
       )}

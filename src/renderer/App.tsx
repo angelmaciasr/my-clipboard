@@ -84,6 +84,8 @@ const App: React.FC = () => {
   // Manejar clic en un item (copiar al clipboard)
   const handleItemClick = useCallback((item: ClipboardItem) => {
     window.electronAPI.copyToClipboard(item.content);
+    // Actualizar el timestamp de lastUsed
+    window.electronAPI.updateLastUsed(item.id);
   }, []);
 
   // Manejar eliminación de un item
@@ -108,7 +110,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-app-bg text-app-text rounded-xl shadow-lg">
+    <div className="h-screen w-screen flex flex-col bg-app-bg text-app-text rounded-xl shadow-lg overflow-hidden">
       <Header itemCount={items.length} />
 
       <div className="p-4">

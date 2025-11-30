@@ -15,7 +15,7 @@ const Header = (props : HeaderProps) => {
       logger.log('handleClose clicked');
       window.electronAPI.hideWindow();
     }, []);
-    
+
     const handleMinimize = useCallback(() => {
       logger.log('handleMinimize clicked');
       window.electronAPI.minimizeWindow();
@@ -68,10 +68,9 @@ const Header = (props : HeaderProps) => {
         setClearOldestChecked(false);
       }, []);
 
-
   return (
     <>
-      <div className="bg-gray-800 flex items-center justify-between h-8 px-3 border-b border-gray-700  draggable-area">
+      <div className="bg-gray-800 flex items-center justify-between h-8 px-3 border-b border-gray-700 draggable-area rounded-t-xl">
           <div className="flex gap-2">
             {/* Botón rojo - Cerrar */}
             <button
@@ -106,7 +105,7 @@ const Header = (props : HeaderProps) => {
           </div>
 
           <div className='text-center text-sm text-app-text'>
-            <button className='bg-red-600 text-app-text rounded px-2 py-1 m-1' onClick={handleClearAll}>Limpiar</button>
+            <button className='bg-red-600 text-app-text rounded px-3 py-1 hover:bg-red-700 transition-colors' onClick={handleClearAll}>Limpiar</button>
           </div>
         </div>
 
